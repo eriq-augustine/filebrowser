@@ -1,3 +1,5 @@
+#!/bin/ruby
+
 require 'fileutils'
 require 'open3'
 require 'shellwords'

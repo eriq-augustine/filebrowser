@@ -28398,8 +28398,18 @@ filebrowser.filetypes.getMimeForExension = function(ext) {
    return 'text/plain';
 }
 
+// All URLs in templates are quoted with single quotes.
+function _escapeURL(url) {
+   // TEST
+   console.log(url);
+   console.log(url.replace(/'/g, '%27'));
+
+   return url.replace(/'/g, '%27');
+}
+
 function _renderGeneralIFrame(file) {
    return filebrowser.filetypes.templates.generalIFrame
+      .replace('{{ESCAPED_URL}}', _escapeURL(filebrowser.getDirectLink(file)))
       .replace('{{RAW_URL}}', filebrowser.getDirectLink(file));
 }
 
@@ -28409,6 +28419,7 @@ function _renderGeneral(file) {
       .replace('{{MOD_TIME}}', filebrowser.util.formatDate(file.modDate))
       .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
       .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
+      .replace('{{ESCAPED_URL}}', _escapeURL(filebrowser.getDirectLink(file)))
       .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{DOWNLOAD_NAME}}', file.name);
 }
@@ -28419,6 +28430,7 @@ function _renderArchive(file) {
       .replace('{{MOD_TIME}}', filebrowser.util.formatDate(file.modDate))
       .replace('{{SIZE}}', filebrowser.util.bytesToHuman(file.size))
       .replace('{{TYPE}}', filebrowser.filetypes.getFileClass(file) || 'unknown')
+      .replace('{{ESCAPED_URL}}', _escapeURL(filebrowser.getDirectLink(file)))
       .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{DOWNLOAD_NAME}}', file.name)
       .replace('{{ID}}', file.id);
@@ -28426,12 +28438,14 @@ function _renderArchive(file) {
 
 function _renderAudio(file) {
    return filebrowser.filetypes.templates.audio
+      .replace('{{ESCAPED_URL}}', _escapeURL(filebrowser.getDirectLink(file)))
       .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{MIME}}', filebrowser.filetypes.extensions[file.extension].mime);
 }
 
 function _renderImage(file) {
    return filebrowser.filetypes.templates.image
+      .replace('{{ESCAPED_URL}}', _escapeURL(filebrowser.getDirectLink(file)))
       .replace('{{RAW_URL}}', filebrowser.getDirectLink(file))
       .replace('{{BASE_NAME}}', file.basename)
       .replace('{{BASE_NAME}}', file.basename);
@@ -28465,7 +28479,7 @@ function _renderVideo(file) {
 
    var videoHTML = filebrowser.filetypes.templates.video;
 
-   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', filebrowser.getDirectLink(file));
+   videoHTML = videoHTML.replace('{{VIDEO_LINK}}', _escapeURL(filebrowser.getDirectLink(file)));
    videoHTML = videoHTML.replace('{{MIME_TYPE}}', mime);
    videoHTML = videoHTML.replace('{{SUB_TRACKS}}', subTracks.join());
 
@@ -28612,12 +28626,12 @@ filebrowser.filetypes.templates.general = `
       <p>Mod Time: {{MOD_TIME}}</p>
       <p>Size: {{SIZE}}</p>
       <p>Type: {{TYPE}}</p>
-      <p><a href='{{RAW_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
+      <p><a href='{{ESCAPED_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
    </div>
 `;
 
 filebrowser.filetypes.templates.generalIFrame = `
-   <iframe src='{{RAW_URL}}'>
+   <iframe src='{{ESCAPED_URL}}'>
       Browser Not Supported
    </iframe>
 `;
@@ -28628,7 +28642,7 @@ filebrowser.filetypes.templates.archive = `
       <p>Mod Time: {{MOD_TIME}}</p>
       <p>Size: {{SIZE}}</p>
       <p>Type: {{TYPE}}</p>
-      <p><a href='{{RAW_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
+      <p><a href='{{ESCAPED_URL}}' download='{{DOWNLOAD_NAME}}'>Direct Download</a></p>
       <br />
       <button class='filebrowser-button' onclick="filebrowser.archive.extract('{{ID}}');">Extract in Browser</button>
    </div>
@@ -28636,13 +28650,13 @@ filebrowser.filetypes.templates.archive = `
 
 filebrowser.filetypes.templates.audio = `
    <audio controls>
-      <source src='{{RAW_URL}}' type='{{MIME}}'>
+      <source src='{{ESCAPED_URL}}' type='{{MIME}}'>
       Browser Not Supported
    </audio>
 `;
 
 filebrowser.filetypes.templates.image = `
-   <img class='filebrowser-image' src='{{RAW_URL}}' title='{{BASE_NAME}}' alt='{{BASE_NAME}}'>
+   <img class='filebrowser-image' src='{{ESCAPED_URL}}' title='{{BASE_NAME}}' alt='{{BASE_NAME}}'>
 `;
 
 filebrowser.filetypes.templates.subtitleTrack = `
